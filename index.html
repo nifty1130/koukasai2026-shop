@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#b3122e">
+<title>模擬店どこ？ | 紅華祭2026</title>
+<style>
+  :root {
+    --bg: #faf7f5;
+    --surface: #ffffff;
+    --text: #1d1a19;
+    --muted: #6d6461;
+    --line: #e7dfdb;
+    --accent: #b3122e;
+    --accent-soft: #fbe8eb;
+    --a-B: #2f6fd6;
+    --a-C: #0f8a6a;
+    --a-D: #c2410c;
+    --a-E: #7c3aed;
+    --badge-fg: #ffffff;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161312;
+      --surface: #211d1c;
+      --text: #f3eeec;
+      --muted: #a89f9b;
+      --line: #36302e;
+      --accent: #ff5c74;
+      --accent-soft: #3a1c22;
+      --a-B: #6c9ef0;
+      --a-C: #3cc59f;
+      --a-D: #f08a4b;
+      --a-E: #a98bf5;
+      --badge-fg: #161312;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 48px; }
+
+  header { padding: 20px 0 8px; }
+  header h1 { margin: 0; font-size: 1.35rem; letter-spacing: .02em; }
+  header h1 span { color: var(--accent); }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: .85rem; }
+
+  .search {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg);
+    padding: 10px 0 10px;
+  }
+  .box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0 12px;
+    transition: border-color .15s;
+  }
+  .box:focus-within { border-color: var(--accent); }
+  .box svg { flex: none; color: var(--muted); }
+  .box input {
+    flex: 1; min-width: 0;
+    border: 0; outline: 0; background: transparent; color: var(--text);
+    font-size: 1.1rem; padding: 14px 0;
+  }
+  .box input::placeholder { color: var(--muted); }
+  .box input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+  .clear {
+    border: 0; background: var(--line); color: var(--text);
+    width: 26px; height: 26px; border-radius: 50%;
+    font-size: 15px; line-height: 26px; cursor: pointer; display: none;
+  }
+  .clear.show { display: block; }
+
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    border: 1.5px solid var(--line); background: var(--surface); color: var(--text);
+    border-radius: 999px; padding: 6px 12px; font-size: .85rem; cursor: pointer;
+    font-family: inherit;
+  }
+  .chip b { font-weight: 700; }
+  .chip small { color: var(--muted); margin-left: 4px; }
+  .chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+
+  .status { color: var(--muted); font-size: .85rem; margin: 6px 2px 10px; }
+
+  .group-h {
+    display: flex; align-items: baseline; gap: 8px;
+    margin: 22px 2px 8px; font-size: 1rem;
+  }
+  .group-h .near { color: var(--muted); font-size: .85rem; font-weight: 400; }
+  .group-h a { margin-left: auto; font-size: .8rem; font-weight: 400; }
+
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .card {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px;
+  }
+  .badge {
+    flex: none;
+    width: 56px; height: 56px; border-radius: 12px;
+    display: grid; place-items: center; text-align: center;
+    color: var(--badge-fg); font-weight: 800; line-height: 1;
+  }
+  .badge .l { font-size: 1.7rem; }
+  .badge .s { font-size: .62rem; font-weight: 600; margin-top: 2px; opacity: .9; }
+  .info { flex: 1; min-width: 0; }
+  .where { font-weight: 700; font-size: .95rem; }
+  .where .near { font-weight: 400; color: var(--muted); }
+  .name { font-size: 1rem; margin-top: 1px; overflow-wrap: anywhere; }
+  .org { font-size: .82rem; color: var(--muted); overflow-wrap: anywhere; }
+  .mapbtn {
+    flex: none; align-self: center;
+    font-size: .78rem; text-decoration: none;
+    color: var(--accent); border: 1.5px solid currentColor;
+    border-radius: 999px; padding: 4px 10px;
+  }
+  a { color: var(--accent); }
+
+  .empty {
+    text-align: center; color: var(--muted);
+    padding: 36px 12px; border: 1.5px dashed var(--line); border-radius: var(--radius);
+  }
+
+  footer { margin-top: 36px; color: var(--muted); font-size: .78rem; line-height: 1.7; }
+
+  /* 1件だけヒットしたら答えを大きく */
+  .solo .card { padding: 18px 16px; }
+  .solo .badge { width: 76px; height: 76px; }
+  .solo .badge .l { font-size: 2.4rem; }
+  .solo .where { font-size: 1.15rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>模擬店<span>どこ？</span></h1>
+    <p>第22回 紅華祭 / 店名・団体名・メニューで検索するとエリアが出ます</p>
+  </header>
+
+  <div class="search">
+    <label class="box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off"
+             placeholder="例：焼きそば / 弓道部 / チュロス" aria-label="模擬店を検索">
+      <button class="clear" id="clear" type="button" aria-label="クリア">×</button>
+    </label>
+    <div class="chips" id="chips" role="group" aria-label="エリアで絞り込み"></div>
+  </div>
+
+  <div class="status" id="status" aria-live="polite"></div>
+  <div id="results"></div>
+
+  <footer>
+    営業：10/11（日）11:00–17:00 ／ 10/12（月・祝）10:00–16:00<br>
+    データ出典：<a href="https://koukasai.jp/2026/shop/" target="_blank" rel="noopener">紅華祭公式サイト 模擬店ページ</a>（10/11時点）・
+    <a href="https://koukasai.jp/2026/map" target="_blank" rel="noopener">会場MAP</a><br>
+    実行委員会 内部向け
+  </footer>
+</div>
+
+<script src="shops.js"></script>
+<script>
+(() => {
+  const AREAS = window.AREAS, SHOPS = window.SHOPS;
+  const $q = document.getElementById("q");
+  const $clear = document.getElementById("clear");
+  const $chips = document.getElementById("chips");
+  const $status = document.getElementById("status");
+  const $results = document.getElementById("results");
+
+  // 表記ゆれ吸収：全角半角・大小文字・カタカナ/ひらがな・記号と空白を無視
+  const norm = (s) => s.normalize("NFKC").toLowerCase()
+    .replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .replace(/[\s・·『』「」（）()！!？?♡☆★、。,.\-ー－〜~_]/g, "");
+
+  const index = SHOPS.map((s, i) => ({
+    ...s, i,
+    nName: norm(s.name), nOrg: norm(s.org),
+    hay: norm([s.name, s.org, s.kw || "", AREAS[s.area].name, AREAS[s.area].near].join(" ")),
+  }));
+
+  let area = "";
+
+  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function renderChips() {
+    const counts = {};
+    SHOPS.forEach((s) => (counts[s.area] = (counts[s.area] || 0) + 1));
+    const items = [["", "すべて", SHOPS.length]].concat(Object.keys(AREAS).map((k) => [k, AREAS[k].name, counts[k] || 0]));
+    $chips.innerHTML = items.map(([k, label, n]) =>
+      `<button class="chip" type="button" data-area="${k}" aria-pressed="${k === area}"><b>${esc(label)}</b><small>${n}</small></button>`
+    ).join("");
+  }
+
+  function search(raw) {
+    const terms = raw.trim().split(/[\s　]+/).filter(Boolean);
+    let list = index.filter((s) => !area || s.area === area);
+    if (!terms.length) return { list, scored: false };
+    list = list.map((s) => {
+      let score = 0;
+      for (const t of terms) {
+        // 1文字のアルファベット（b〜e）はエリア指定として扱う
+        if (/^[a-z]$/i.test(t) && AREAS[t.toUpperCase()]) {
+          if (s.area !== t.toUpperCase()) return null;
+          score += 1; continue;
+        }
+        const n = norm(t);
+        if (!n) continue;
+        if (!s.hay.includes(n)) return null;
+        score += s.nName.startsWith(n) ? 6 : s.nName.includes(n) ? 4 : s.nOrg.startsWith(n) ? 5 : s.nOrg.includes(n) ? 3 : 1;
+      }
+      return { ...s, score };
+    }).filter(Boolean).sort((a, b) => b.score - a.score || a.i - b.i);
+    return { list, scored: true };
+  }
+
+  function card(s) {
+    const a = AREAS[s.area];
+    const near = a.near ? `<span class="near">・${esc(a.near)}</span>` : "";
+    return `<li class="card">
+      <div class="badge" style="background:var(--a-${s.area})"><div><div class="l">${s.area}</div><div class="s">エリア</div></div></div>
+      <div class="info">
+        <div class="where">${esc(a.name)}${near}</div>
+        <div class="name">${esc(s.name)}</div>
+        <div class="org">${esc(s.org)}</div>
+      </div>
+      <a class="mapbtn" href="${a.map}" target="_blank" rel="noopener">地図</a>
+    </li>`;
+  }
+
+  function render() {
+    const raw = $q.value;
+    $clear.classList.toggle("show", raw.length > 0);
+    const { list, scored } = search(raw);
+
+    if (!list.length) {
+      $status.textContent = "";
+      $results.innerHTML = `<div class="empty">「${esc(raw.trim())}」は見つかりませんでした<br><small>メニュー名（例：たこ焼き）や団体名の一部でも探せます</small></div>`;
+      return;
+    }
+
+    if (scored) {
+      $status.textContent = `${list.length}件`;
+      $results.innerHTML = `<ul class="${list.length === 1 ? "solo" : ""}">${list.map(card).join("")}</ul>`;
+      return;
+    }
+
+    // 未入力：エリアごとに一覧
+    $status.textContent = `${list.length}店舗`;
+    const groups = {};
+    list.forEach((s) => (groups[s.area] = groups[s.area] || []).push(s));
+    $results.innerHTML = Object.keys(AREAS).filter((k) => groups[k]).map((k) => {
+      const a = AREAS[k];
+      return `<h2 class="group-h">${esc(a.name)}${a.near ? `<span class="near">${esc(a.near)}</span>` : ""}<a href="${a.map}" target="_blank" rel="noopener">地図で見る</a></h2>
+        <ul>${groups[k].map(card).join("")}</ul>`;
+    }).join("");
+  }
+
+  function syncUrl() {
+    const p = new URLSearchParams();
+    if ($q.value.trim()) p.set("q", $q.value.trim());
+    if (area) p.set("area", area);
+    const qs = p.toString();
+    history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+  }
+
+  // 初期状態（?q=...&area=... に対応）
+  const params = new URLSearchParams(location.search);
+  $q.value = params.get("q") || "";
+  area = AREAS[(params.get("area") || "").toUpperCase()] ? params.get("area").toUpperCase() : "";
+
+  renderChips();
+  render();
+
+  $q.addEventListener("input", () => { render(); syncUrl(); });
+  $clear.addEventListener("click", () => { $q.value = ""; render(); syncUrl(); $q.focus(); });
+  $chips.addEventListener("click", (e) => {
+    const b = e.target.closest(".chip");
+    if (!b) return;
+    area = b.dataset.area === area ? "" : b.dataset.area;
+    renderChips(); render(); syncUrl();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== $q) { e.preventDefault(); $q.focus(); }
+  });
+})();
+</script>
+</body>
+</html>
