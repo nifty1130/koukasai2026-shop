@@ -15,11 +15,9 @@
     --line: #e7dfdb;
     --accent: #b3122e;
     --accent-soft: #fbe8eb;
-    --a-B: #2f6fd6;
-    --a-C: #0f8a6a;
-    --a-D: #c2410c;
-    --a-E: #7c3aed;
-    --badge-fg: #ffffff;
+    --tag: #f1ebe8;
+    --warn: #9a3412;
+    --warn-soft: #fdebd8;
     --radius: 14px;
   }
   @media (prefers-color-scheme: dark) {
@@ -29,13 +27,11 @@
       --text: #f3eeec;
       --muted: #a89f9b;
       --line: #36302e;
-      --accent: #ff5c74;
+      --accent: #ff6b81;
       --accent-soft: #3a1c22;
-      --a-B: #6c9ef0;
-      --a-C: #3cc59f;
-      --a-D: #f08a4b;
-      --a-E: #a98bf5;
-      --badge-fg: #161312;
+      --tag: #2e2827;
+      --warn: #fdba74;
+      --warn-soft: #3b2414;
     }
   }
   * { box-sizing: border-box; }
@@ -49,7 +45,7 @@
   }
   .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 48px; }
 
-  header { padding: 20px 0 8px; }
+  header { padding: 20px 0 6px; }
   header h1 { margin: 0; font-size: 1.35rem; letter-spacing: .02em; }
   header h1 span { color: var(--accent); }
   header p { margin: 4px 0 0; color: var(--muted); font-size: .85rem; }
@@ -57,7 +53,7 @@
   .search {
     position: sticky; top: 0; z-index: 5;
     background: var(--bg);
-    padding: 10px 0 10px;
+    padding: 10px 0;
   }
   .box {
     display: flex; align-items: center; gap: 8px;
@@ -86,22 +82,27 @@
   .chips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
   .chip {
-    flex: none;
+    flex: none; display: inline-flex; align-items: center; gap: 6px;
     border: 1.5px solid var(--line); background: var(--surface); color: var(--text);
-    border-radius: 999px; padding: 6px 12px; font-size: .85rem; cursor: pointer;
+    border-radius: 999px; padding: 5px 11px 5px 6px; font-size: .85rem; cursor: pointer;
     font-family: inherit;
   }
-  .chip b { font-weight: 700; }
-  .chip small { color: var(--muted); margin-left: 4px; }
+  .chip.all { padding-left: 11px; }
+  .chip small { color: var(--muted); }
   .chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .sw {
+    width: 22px; height: 22px; border-radius: 6px;
+    display: inline-grid; place-items: center;
+    font-weight: 800; font-size: .8rem; line-height: 1;
+  }
 
   .status { color: var(--muted); font-size: .85rem; margin: 6px 2px 10px; }
 
   .group-h {
-    display: flex; align-items: baseline; gap: 8px;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px;
     margin: 22px 2px 8px; font-size: 1rem;
   }
-  .group-h .near { color: var(--muted); font-size: .85rem; font-weight: 400; }
+  .group-h .near { font-weight: 400; font-size: .9rem; }
   .group-h a { margin-left: auto; font-size: .8rem; font-weight: 400; }
 
   ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -116,22 +117,36 @@
     flex: none;
     width: 56px; height: 56px; border-radius: 12px;
     display: grid; place-items: center; text-align: center;
-    color: var(--badge-fg); font-weight: 800; line-height: 1;
+    font-weight: 800; line-height: 1;
   }
-  .badge .l { font-size: 1.7rem; }
-  .badge .s { font-size: .62rem; font-weight: 600; margin-top: 2px; opacity: .9; }
+  .badge .l { font-size: 1.6rem; }
+  .badge .s { font-size: .72rem; font-weight: 700; margin-top: 3px; letter-spacing: .04em; }
   .info { flex: 1; min-width: 0; }
-  .where { font-weight: 700; font-size: .95rem; }
-  .where .near { font-weight: 400; color: var(--muted); }
-  .name { font-size: 1rem; margin-top: 1px; overflow-wrap: anywhere; }
+  .where { font-size: .95rem; }
+  .where b { margin-right: 4px; }
+  .zone { font-size: .8rem; color: var(--accent); font-weight: 600; }
+  .name { font-size: 1rem; margin-top: 2px; overflow-wrap: anywhere; }
   .org { font-size: .82rem; color: var(--muted); overflow-wrap: anywhere; }
-  .mapbtn {
-    flex: none; align-self: center;
-    font-size: .78rem; text-decoration: none;
-    color: var(--accent); border: 1.5px solid currentColor;
-    border-radius: 999px; padding: 4px 10px;
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .tag { font-size: .7rem; padding: 1px 7px; border-radius: 6px; background: var(--tag); color: var(--muted); }
+  .tag.warn { background: var(--warn-soft); color: var(--warn); font-weight: 600; }
+  .maplink {
+    font-size: .7rem; text-decoration: none; white-space: nowrap;
+    color: var(--accent); border: 1px solid currentColor;
+    border-radius: 6px; padding: 0 7px;
   }
   a { color: var(--accent); }
+
+  /* エリア一覧では見出しにエリアと地図が出ているので各カードでは省略 */
+  .grouped .where, .grouped .maplink, .grouped .tags.only-map { display: none; }
+
+  /* 1件だけヒットしたら答えを大きく */
+  .solo .card { padding: 18px 16px; }
+  .solo .badge { width: 76px; height: 76px; }
+  .solo .badge .l { font-size: 2.3rem; }
+  .solo .badge .s { font-size: .85rem; }
+  .solo .where { font-size: 1.12rem; }
+  .solo .zone { font-size: .9rem; }
 
   .empty {
     text-align: center; color: var(--muted);
@@ -139,19 +154,13 @@
   }
 
   footer { margin-top: 36px; color: var(--muted); font-size: .78rem; line-height: 1.7; }
-
-  /* 1件だけヒットしたら答えを大きく */
-  .solo .card { padding: 18px 16px; }
-  .solo .badge { width: 76px; height: 76px; }
-  .solo .badge .l { font-size: 2.4rem; }
-  .solo .where { font-size: 1.15rem; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>模擬店<span>どこ？</span></h1>
-    <p>第22回 紅華祭 / 店名・団体名・メニューで検索するとエリアが出ます</p>
+    <p>第22回 紅華祭 / 店名・団体名・メニュー・出店番号（例：D07）で検索</p>
   </header>
 
   <div class="search">
@@ -168,8 +177,9 @@
   <div id="results"></div>
 
   <footer>
-    営業：10/11（日）11:00–17:00 ／ 10/12（月・祝）10:00–16:00<br>
-    データ出典：<a href="https://koukasai.jp/2026/shop/" target="_blank" rel="noopener">紅華祭公式サイト 模擬店ページ</a>（10/11時点）・
+    模擬店営業：10/11（日）11:00–17:00 ／ 10/12（月・祝）10:00–16:00<br>
+    キッチンカー（Aエリア）とコンソーシアム（F・Gエリア）ではお楽しみ券は使えません<br>
+    出典：<a href="https://koukasai.jp/2026/shop/" target="_blank" rel="noopener">公式サイト 模擬店ページ</a>、パンフレット「エリア案内」・各エリア配置図 ／
     <a href="https://koukasai.jp/2026/map" target="_blank" rel="noopener">会場MAP</a><br>
     実行委員会 内部向け
   </footer>
@@ -178,7 +188,8 @@
 <script src="shops.js"></script>
 <script>
 (() => {
-  const AREAS = window.AREAS, SHOPS = window.SHOPS;
+  const AREAS = window.AREAS, TYPES = window.TYPES, SHOPS = window.SHOPS;
+  const VENUE_MAP = "https://koukasai.jp/2026/map";
   const $q = document.getElementById("q");
   const $clear = document.getElementById("clear");
   const $chips = document.getElementById("chips");
@@ -188,25 +199,37 @@
   // 表記ゆれ吸収：全角半角・大小文字・カタカナ/ひらがな・記号と空白を無視
   const norm = (s) => s.normalize("NFKC").toLowerCase()
     .replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60))
-    .replace(/[\s・·『』「」（）()！!？?♡☆★、。,.\-ー－〜~_]/g, "");
+    .replace(/[\s・·『』「」（）()！!？?♡☆★、。,.\-ー－〜~_#&＆]/g, "");
 
-  const index = SHOPS.map((s, i) => ({
-    ...s, i,
-    nName: norm(s.name), nOrg: norm(s.org),
-    hay: norm([s.name, s.org, s.kw || "", AREAS[s.area].name, AREAS[s.area].near].join(" ")),
-  }));
+  const zoneOf = (s) => {
+    const n = parseInt(s.no, 10);
+    const z = AREAS[s.area].zones.find((z) => n <= z.to);
+    return z ? z.label : "";
+  };
+
+  const index = SHOPS.map((s, i) => {
+    const a = AREAS[s.area], t = TYPES[s.type || "shop"];
+    const zone = zoneOf(s);
+    return {
+      ...s, i, zone, typeLabel: t.label, noTicket: !!t.noTicket,
+      nName: norm(s.name), nOrg: norm(s.org || ""),
+      hay: norm([s.name, s.org || "", s.kw || "", a.name, a.near, zone, t.label].join(" ")),
+    };
+  });
 
   let area = "";
 
-  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const swatch = (k) => `<span class="sw" style="background:${AREAS[k].bg};color:${AREAS[k].fg}">${k}</span>`;
 
   function renderChips() {
     const counts = {};
     SHOPS.forEach((s) => (counts[s.area] = (counts[s.area] || 0) + 1));
-    const items = [["", "すべて", SHOPS.length]].concat(Object.keys(AREAS).map((k) => [k, AREAS[k].name, counts[k] || 0]));
-    $chips.innerHTML = items.map(([k, label, n]) =>
-      `<button class="chip" type="button" data-area="${k}" aria-pressed="${k === area}"><b>${esc(label)}</b><small>${n}</small></button>`
-    ).join("");
+    $chips.innerHTML =
+      `<button class="chip all" type="button" data-area="" aria-pressed="${area === ""}">すべて<small>${SHOPS.length}</small></button>` +
+      Object.keys(AREAS).map((k) =>
+        `<button class="chip" type="button" data-area="${k}" aria-pressed="${k === area}" aria-label="${esc(AREAS[k].name)}">${swatch(k)}<small>${counts[k] || 0}</small></button>`
+      ).join("");
   }
 
   function search(raw) {
@@ -216,15 +239,22 @@
     list = list.map((s) => {
       let score = 0;
       for (const t of terms) {
-        // 1文字のアルファベット（b〜e）はエリア指定として扱う
-        if (/^[a-z]$/i.test(t) && AREAS[t.toUpperCase()]) {
-          if (s.area !== t.toUpperCase()) return null;
+        const t0 = t.normalize("NFKC").toLowerCase();
+        // 出店番号（d07 / D-7 など）は完全一致
+        const booth = t0.match(/^([a-z])-?(\d{1,2})$/);
+        if (booth && AREAS[booth[1].toUpperCase()]) {
+          if (s.area !== booth[1].toUpperCase() || parseInt(s.no, 10) !== parseInt(booth[2], 10)) return null;
+          score += 10; continue;
+        }
+        // アルファベット1文字はエリア指定
+        if (/^[a-z]$/.test(t0) && AREAS[t0.toUpperCase()]) {
+          if (s.area !== t0.toUpperCase()) return null;
           score += 1; continue;
         }
         const n = norm(t);
         if (!n) continue;
         if (!s.hay.includes(n)) return null;
-        score += s.nName.startsWith(n) ? 6 : s.nName.includes(n) ? 4 : s.nOrg.startsWith(n) ? 5 : s.nOrg.includes(n) ? 3 : 1;
+        score += s.nName.startsWith(n) ? 6 : s.nOrg.startsWith(n) ? 5 : s.nName.includes(n) ? 4 : s.nOrg.includes(n) ? 3 : 1;
       }
       return { ...s, score };
     }).filter(Boolean).sort((a, b) => b.score - a.score || a.i - b.i);
@@ -233,15 +263,20 @@
 
   function card(s) {
     const a = AREAS[s.area];
-    const near = a.near ? `<span class="near">・${esc(a.near)}</span>` : "";
+    const tags = [];
+    if (s.type) tags.push(`<span class="tag">${esc(s.typeLabel)}</span>`);
+    if (s.noTicket) tags.push(`<span class="tag warn">お楽しみ券不可</span>`);
+    if (s.days) tags.push(`<span class="tag warn">${esc(s.days)}</span>`);
+    const map = `<a class="maplink" href="${a.map || VENUE_MAP}" target="_blank" rel="noopener">${a.map ? "地図" : "会場MAP"} ↗</a>`;
     return `<li class="card">
-      <div class="badge" style="background:var(--a-${s.area})"><div><div class="l">${s.area}</div><div class="s">エリア</div></div></div>
+      <div class="badge" style="background:${a.bg};color:${a.fg}"><div><div class="l">${s.area}</div><div class="s">${esc(s.no)}</div></div></div>
       <div class="info">
-        <div class="where">${esc(a.name)}${near}</div>
+        <div class="where"><b>${esc(a.name)}</b>${esc(a.near)}</div>
+        ${s.zone ? `<div class="zone">${esc(s.zone)}</div>` : ""}
         <div class="name">${esc(s.name)}</div>
-        <div class="org">${esc(s.org)}</div>
+        ${s.org ? `<div class="org">${esc(s.org)}</div>` : ""}
+        <div class="tags${tags.length ? "" : " only-map"}">${tags.join("")}${map}</div>
       </div>
-      <a class="mapbtn" href="${a.map}" target="_blank" rel="noopener">地図</a>
     </li>`;
   }
 
@@ -252,7 +287,7 @@
 
     if (!list.length) {
       $status.textContent = "";
-      $results.innerHTML = `<div class="empty">「${esc(raw.trim())}」は見つかりませんでした<br><small>メニュー名（例：たこ焼き）や団体名の一部でも探せます</small></div>`;
+      $results.innerHTML = `<div class="empty">「${esc(raw.trim())}」は見つかりませんでした<br><small>メニュー名（例：たこ焼き）や団体名の一部、出店番号（例：E12）でも探せます</small></div>`;
       return;
     }
 
@@ -266,11 +301,11 @@
     $status.textContent = `${list.length}店舗`;
     const groups = {};
     list.forEach((s) => (groups[s.area] = groups[s.area] || []).push(s));
-    $results.innerHTML = Object.keys(AREAS).filter((k) => groups[k]).map((k) => {
+    $results.innerHTML = `<div class="grouped">` + Object.keys(AREAS).filter((k) => groups[k]).map((k) => {
       const a = AREAS[k];
-      return `<h2 class="group-h">${esc(a.name)}${a.near ? `<span class="near">${esc(a.near)}</span>` : ""}<a href="${a.map}" target="_blank" rel="noopener">地図で見る</a></h2>
+      return `<h2 class="group-h">${swatch(k)}${esc(a.name)}<span class="near">${esc(a.near)}</span><a href="${a.map || VENUE_MAP}" target="_blank" rel="noopener">${a.map ? "地図で見る" : "会場MAP"}</a></h2>
         <ul>${groups[k].map(card).join("")}</ul>`;
-    }).join("");
+    }).join("") + `</div>`;
   }
 
   function syncUrl() {
@@ -284,7 +319,8 @@
   // 初期状態（?q=...&area=... に対応）
   const params = new URLSearchParams(location.search);
   $q.value = params.get("q") || "";
-  area = AREAS[(params.get("area") || "").toUpperCase()] ? params.get("area").toUpperCase() : "";
+  const pa = (params.get("area") || "").toUpperCase();
+  area = AREAS[pa] ? pa : "";
 
   renderChips();
   render();
