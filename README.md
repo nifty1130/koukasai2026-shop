@@ -1,0 +1,1 @@
+# koukasai2026-shop
